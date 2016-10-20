@@ -3,10 +3,11 @@ var dgram   = require("dgram"),
 
 
 
-var Client = function(host, port) {
+var Client = function(host, port, prefix) {
     this.host = host;
     this.port = port;
-    
+    this.prefix = prefix;
+
     // Create socket (ignore errors)
     this.socket = dgram.createSocket("udp4");
     this.socket.on("error", function() {});
@@ -33,9 +34,9 @@ Client.prototype.gauge = function(bucket, value) {
 };
 
 Client.prototype.send = function(bucket, value) {
-    
-    var buffer = new Buffer(bucket + ":" + value);
-    
+
+    var buffer = new Buffer(this.prefix + bucket + ":" + value);
+
     // Send (ignore errors)
     this.socket.send(buffer, 0, buffer.length, this.port, this.host,
         function (err, bytes) {}
